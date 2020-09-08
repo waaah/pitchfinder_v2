@@ -1,0 +1,28 @@
+PODS:
+  - Flutter (1.0.0)
+  - "permission_handler (4.4.0+hotfix.4)":
+    - Flutter
+  - pitchdetector (0.0.1):
+    - Flutter
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
+  - pitchdetector (from `.symlinks/plugins/pitchdetector/ios`)
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  permission_handler:
+    :path: ".symlinks/plugins/permission_handler/ios"
+  pitchdetector:
+    :path: ".symlinks/plugins/pitchdetector/ios"
+
+SPEC CHECKSUMS:
+  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  permission_handler: 8278954f2382902f63f00dd8828769c0bd6d511b
+  pitchdetector: ca89af540a8dcc41299f4a54438f4e577f04010a
+
+PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
+
+COCOAPODS: 1.9.3
