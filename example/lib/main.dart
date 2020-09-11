@@ -56,6 +56,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   void startRecording()  async{
+    print("startRecording");
     setState(() {
         isRecording = true;
     });

@@ -31,6 +31,7 @@ class Pitchdetector {
   }
 
   startRecording() async {
+    print("setrecording");
     if (await checkPermission()) {
       try {
         var result = await _channel.invokeMethod('startRecording');
