@@ -16,6 +16,7 @@ class Pitchdetector {
       _recorderController.stream;
   bool get isRecording => _isRecording;
 
+
   static Future<String> get platformVersion async {
     final String version = await _channel.invokeMethod('getPlatformVersion');
     return version;
@@ -34,21 +35,14 @@ class Pitchdetector {
         _isRecording = true;
         _channel.setMethodCallHandler((MethodCall call) {
           switch (call.method) {
-            case "getPitch":
-              if (_recorderController != null) {
-                _recorderController.add({
-                  "pitch": call.arguments,
-                });
-              } else {
-                print("Is not null");
-              }
-              break;
             case "getPcm":
-                //if(_isRecording){
+                if(_isRecording && _recorderController != null){
                    var yin = new YIN(22050, 2048);
-                   //print(call.arguments);
-                   print("The pitch is "+ yin.getPitch(call.arguments).toString());
-                //}
+                   double pitch =  yin.getPitch(call.arguments);
+                  _recorderController.add({
+                    "pitch": pitch,
+                  });
+                }
               break;
             default:
               throw new ArgumentError("Unknown method: ${call.method}");
@@ -66,7 +60,6 @@ class Pitchdetector {
     _isRecording = false;
     var result = await _channel.invokeMethod('stopRecording');
   }
-
   setChannelHandler(){
 
   }

@@ -76,8 +76,6 @@ public class SwiftPitchdetectorPlugin: NSObject, FlutterPlugin {
                         from : 0,
                         to : Int(pcmBuffer!.frameLength),
                         by: buffer.stride ).map{ Double(channelDataPointer[$0]) }
-                    print(channelData[0]);
-
                     channel.invokeMethod("getPcm", arguments: channelData)
                 }
             }

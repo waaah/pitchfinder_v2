@@ -164,55 +164,47 @@ class YIN {
   }
   double getPitch(var audioBuffer) {
     int tauEstimate;
-	try{
-double pitchInHertz;
-    print("starting method");
-    // step 2
-    difference(audioBuffer);
-    print("first done");
-    // step 3
-    cumulativeMeanNormalizedDifference();
-	print("second done");
-    // step 4
-    tauEstimate = absoluteThreshold();
+    try {
+      double pitchInHertz;
+      // step 2
+      difference(audioBuffer);
+      // step 3
+      cumulativeMeanNormalizedDifference();
+      // step 4
+      tauEstimate = absoluteThreshold();
+      // step 5
+      if (tauEstimate != -1) {
+        var betterTau = parabolicInterpolation(tauEstimate);
+        // step 6
+        // TODO Implement optimization for the AUBIO_YIN algorithm.
+        // 0.77% => 0.5% error rate,
+        // using the data of the YIN paper
+        // bestLocalEstimate()
 
-    // step 5	
-    if (tauEstimate != -1) {
-      var betterTau = parabolicInterpolation(tauEstimate);
-      // step 6
-      // TODO Implement optimization for the AUBIO_YIN algorithm.
-      // 0.77% => 0.5% error rate,
-      // using the data of the YIN paper
-      // bestLocalEstimate()
+        // conversion to Hz
+        pitchInHertz = sampleRate / betterTau;
+      } else {
+        // no pitch found
+        pitchInHertz = -1;
+      }
 
-      // conversion to Hz
-      pitchInHertz = sampleRate / betterTau;
-    } else {
-      // no pitch found
-      pitchInHertz = -1;
-    }
-
-    return pitchInHertz;
-	}
-	catch(ex,stacktrace){
-		print(ex.toString());
-		print(stacktrace.toString());
-	}
-    
+      return pitchInHertz;
+    } catch (ex, stacktrace) {}
   }
+
   void difference(var audioBuffer) {
-		int index, tau;
-		double delta;
-		for (tau = 0; tau < yinBuffer.length; tau++) {
-			yinBuffer[tau] = 0;
-		}
-		for (tau = 1; tau < yinBuffer.length; tau++) {
-			for (index = 0; index < yinBuffer.length; index++) {
-				delta = audioBuffer[index] - audioBuffer[index + tau];
-				yinBuffer[tau] += delta * delta;
-			}
-		}
-	}
+    int index, tau;
+    double delta;
+    for (tau = 0; tau < yinBuffer.length; tau++) {
+      yinBuffer[tau] = 0;
+    }
+    for (tau = 1; tau < yinBuffer.length; tau++) {
+      for (index = 0; index < yinBuffer.length; index++) {
+        delta = audioBuffer[index] - audioBuffer[index + tau];
+        yinBuffer[tau] += delta * delta;
+      }
+    }
+  }
 
   /**
 	 * The cumulative mean normalized difference function as described in step 3
@@ -223,53 +215,53 @@ double pitchInHertz;
 	 */
   void cumulativeMeanNormalizedDifference() {
     int tau;
-		yinBuffer[0] = 1;
-		double runningSum = 0;
-		for (tau = 1; tau < yinBuffer.length; tau++) {
-			runningSum += yinBuffer[tau];
-			yinBuffer[tau] *= tau / runningSum;
-		}
+    yinBuffer[0] = 1;
+    double runningSum = 0;
+    for (tau = 1; tau < yinBuffer.length; tau++) {
+      runningSum += yinBuffer[tau];
+      yinBuffer[tau] *= tau / runningSum;
+    }
   }
+
   /**
 	 * Implements step 4 of the AUBIO_YIN paper.
 	 */
   int absoluteThreshold() {
     // Uses another loop construct
-		// than the AUBIO implementation
-		int tau;
-		// first two positions in yinBuffer are always 1
-		// So start at the third (index 2)
+    // than the AUBIO implementation
+    int tau;
+    // first two positions in yinBuffer are always 1
+    // So start at the third (index 2)
     var prob;
     for (tau = 2; tau < yinBuffer.length; tau++) {
-			if (yinBuffer[tau] < threshold) {
-				while (tau + 1 < yinBuffer.length && yinBuffer[tau + 1] < yinBuffer[tau]) {
-					tau++;
-				}
-				// found tau, exit loop and return
-				// store the probability
-				// From the YIN paper: The threshold determines the list of
-				// candidates admitted to the set, and can be interpreted as the
-				// proportion of aperiodic power tolerated
-				// within a periodic signal.
-				//
-				// Since we want the periodicity and and not aperiodicity:
-				// periodicity = 1 - aperiodicity
-				// result.setProbability(1 - yinBuffer[tau]);
-				break;
-			}
-		}
+      if (yinBuffer[tau] < threshold) {
+        while (
+            tau + 1 < yinBuffer.length && yinBuffer[tau + 1] < yinBuffer[tau]) {
+          tau++;
+        }
+        // found tau, exit loop and return
+        // store the probability
+        // From the YIN paper: The threshold determines the list of
+        // candidates admitted to the set, and can be interpreted as the
+        // proportion of aperiodic power tolerated
+        // within a periodic signal.
+        //
+        // Since we want the periodicity and and not aperiodicity:
+        // periodicity = 1 - aperiodicity
+        // result.setProbability(1 - yinBuffer[tau]);
+        break;
+      }
+    }
     // if no pitch found, tau => -1
-		if (tau == yinBuffer.length || yinBuffer[tau] >= threshold) {
-			tau = -1;
-			// result.setProbability(0);
-			// result.setPitched(false);	
-		} else {
-			// result.setPitched(true);
-		}
-		return tau;
+    if (tau == yinBuffer.length || yinBuffer[tau] >= threshold) {
+      tau = -1;
+      // result.setProbability(0);
+      // result.setPitched(false);
+    } else {
+      // result.setPitched(true);
+    }
+    return tau;
   }
-
-  
 
   /**
 	 * Implements step 5 of the AUBIO_YIN paper. It refines the estimated tau
@@ -282,46 +274,42 @@ double pitchInHertz;
 	 *            The estimated tau value.
 	 * @return A better, more precise tau value.
 	 */
-	parabolicInterpolation(final int tauEstimate) {
-		var betterTau;
-		int x0;
-		int x2;
+  parabolicInterpolation(final int tauEstimate) {
+    var betterTau;
+    int x0;
+    int x2;
 
-		if (tauEstimate < 1) {
-			x0 = tauEstimate;
-		} else {
-			x0 = tauEstimate - 1;
-		}
-		if (tauEstimate + 1 < yinBuffer.length) {
-			x2 = tauEstimate + 1;
-		} else {
-			x2 = tauEstimate;
-		}
-		if (x0 == tauEstimate) {
-			if (yinBuffer[tauEstimate] <= yinBuffer[x2]) {
-				betterTau = tauEstimate;
-			} else {
-				betterTau = x2;
-			}
-		} else if (x2 == tauEstimate) {
-			if (yinBuffer[tauEstimate] <= yinBuffer[x0]) {
-				betterTau = tauEstimate;
-			} else {
-				betterTau = x0;
-			}
-		} else {
-			double s0, s1, s2;
-			s0 = yinBuffer[x0];
-			s1 = yinBuffer[tauEstimate];
-			s2 = yinBuffer[x2];
-			// fixed AUBIO implementation, thanks to Karl Helgason:
-			// (2.0f * s1 - s2 - s0) was incorrectly multiplied with -1
-			betterTau = tauEstimate + (s2 - s0) / (2 * (2 * s1 - s2 - s0));
-		}
-		return betterTau;
-	}
-}
-
-
-class FFT{
+    if (tauEstimate < 1) {
+      x0 = tauEstimate;
+    } else {
+      x0 = tauEstimate - 1;
+    }
+    if (tauEstimate + 1 < yinBuffer.length) {
+      x2 = tauEstimate + 1;
+    } else {
+      x2 = tauEstimate;
+    }
+    if (x0 == tauEstimate) {
+      if (yinBuffer[tauEstimate] <= yinBuffer[x2]) {
+        betterTau = tauEstimate;
+      } else {
+        betterTau = x2;
+      }
+    } else if (x2 == tauEstimate) {
+      if (yinBuffer[tauEstimate] <= yinBuffer[x0]) {
+        betterTau = tauEstimate;
+      } else {
+        betterTau = x0;
+      }
+    } else {
+      double s0, s1, s2;
+      s0 = yinBuffer[x0];
+      s1 = yinBuffer[tauEstimate];
+      s2 = yinBuffer[x2];
+      // fixed AUBIO implementation, thanks to Karl Helgason:
+      // (2.0f * s1 - s2 - s0) was incorrectly multiplied with -1
+      betterTau = tauEstimate + (s2 - s0) / (2 * (2 * s1 - s2 - s0));
+    }
+    return betterTau;
+  }
 }
