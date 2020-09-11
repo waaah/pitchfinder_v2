@@ -1,6 +1,6 @@
 PODS:
   - Flutter (1.0.0)
-  - "permission_handler (4.4.0+hotfix.4)":
+  - "permission_handler (5.0.1+1)":
     - Flutter
   - pitchdetector (0.0.1):
     - Flutter
@@ -20,7 +20,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
-  permission_handler: 8278954f2382902f63f00dd8828769c0bd6d511b
+  permission_handler: eac8e15b4a1a3fba55b761d19f3f4e6b005d15b6
   pitchdetector: ca89af540a8dcc41299f4a54438f4e577f04010a
 
 PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c

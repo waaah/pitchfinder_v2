@@ -1,5 +1,5 @@
 package com.example.pitchdetector;
-import be.tarsos.dsp.pitch.FastYin;
+import be.tarsos.dsp.pitch.AMDF;
 
 public class PitchHandler{
     int SAMPLE_RATE = 0;
@@ -11,13 +11,13 @@ public class PitchHandler{
     }
     public float getPitch(short[] audioPcm){
         float[] samples = this.shortToPcmArray(audioPcm);
-        FastYin yin = new FastYin(this.SAMPLE_RATE , this.SAMPLE_SIZE);
+        AMDF yin = new AMDF(this.SAMPLE_RATE , this.SAMPLE_SIZE);
         float pitchResult = yin.getPitch(samples).getPitch();
         return pitchResult;
     }
 
     public float getPitch(float[] audioPcm){
-        FastYin yin = new FastYin(SAMPLE_RATE , SAMPLE_SIZE);
+        AMDF yin = new AMDF(SAMPLE_RATE , SAMPLE_SIZE);
         float pitchResult = yin.getPitch(audioPcm).getPitch();
         return pitchResult;
     }
