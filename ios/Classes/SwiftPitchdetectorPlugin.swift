@@ -104,3 +104,5 @@ public class SwiftPitchdetectorPlugin: NSObject, FlutterPlugin {
       try! engine.stop()
   }
 }
+
+

@@ -26,7 +26,9 @@ import android.os.Handler;
 import android.os.Looper;
 
 
+import java.util.List;
 import java.util.ArrayList;
+
 
 import org.xml.sax.HandlerBase;
 
@@ -99,7 +101,7 @@ public class PitchdetectorPlugin implements FlutterPlugin, MethodCallHandler {
         SAMPLE_RATE, 
         1, 
         AudioFormat.ENCODING_PCM_16BIT, 
-        2048);
+        SAMPLE_SIZE);
     }
    
   }
@@ -113,7 +115,6 @@ public class PitchdetectorPlugin implements FlutterPlugin, MethodCallHandler {
 
   private void findPitch(final AudioRecord audioRecorder ,  final boolean recordingState){
     if(recording){
-      System.out.println("record start");
       mainHandler = new Handler();
       mainHandler.postDelayed(new Runnable() {
         public void run() {
@@ -121,14 +122,19 @@ public class PitchdetectorPlugin implements FlutterPlugin, MethodCallHandler {
               //RUN FOR DELAY OF 500ms
               audioRecorder.read(audioData, 0, SAMPLE_SIZE);
               //System.out.println(audioData.toString());
-              float[] samples = pitchHandler.shortToPcmArray(audioData);
-              float pitchResult =  pitchHandler.getPitch(samples);
+              //float[] samples = pitchHandler.shortToPcmArray(audioData);
+              List<Float> samples = new ArrayList<Float>();
+              for(int i = 0 ; i < audioData.length; i++){
+                samples.add((float)audioData[i]);
+              }
+              System.out.println(audioData[0]);
+              //float pitchResult =  pitchHandler.getPitch(samples);
               try {
-                System.out.println(pitchResult + " pitch in java");
-                if(pitchResult != -1.0){
-                  channel.invokeMethod("getPitch", pitchResult);
-                }
-                
+                // System.out.println(pitchResult + " pitch in java");
+                // if(pitchResult != -1.0){
+                //   channel.invokeMethod("getPitch", pitchResult);
+                  channel.invokeMethod("getPcm", samples);
+                //}
                 findPitch(audioRecorder , recording);
                   
                   // SENDS ARRAY "returnData" BACK TO FLUTTER
