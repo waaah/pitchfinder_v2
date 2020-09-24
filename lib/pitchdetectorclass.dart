@@ -97,7 +97,6 @@ class AMDF {
           minpos = i;
         }
       }
-      print(maxval.toString() + " " + (amd[minpos] * ratio).toString());
       if ((amd[minpos] * ratio).round() < maxval) {
         f0 = sampleRate / minpos;
       }

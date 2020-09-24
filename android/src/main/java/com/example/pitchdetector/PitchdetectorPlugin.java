@@ -81,6 +81,10 @@ public class PitchdetectorPlugin implements FlutterPlugin, MethodCallHandler {
       case "getPlatformVersion":
         result.success("Android " + android.os.Build.VERSION.RELEASE);
         break;
+      case "initializeValues":
+        this.SAMPLE_RATE = call.argument("sampleRate");
+        this.SAMPLE_SIZE = call.argument("sampleSize");
+        audioData = new short[this.SAMPLE_SIZE];
       case "startRecording":
         startRecord(result);
         break;
@@ -96,6 +100,9 @@ public class PitchdetectorPlugin implements FlutterPlugin, MethodCallHandler {
   }
   private void initRecorder(){
     if(audioRecorder == null) {
+      System.out.println("sample rate is" + SAMPLE_RATE);
+      System.out.println("sample size is" + SAMPLE_SIZE);
+      
       audioRecorder = new AudioRecord( 
         1, //mic
         SAMPLE_RATE, 
@@ -127,7 +134,6 @@ public class PitchdetectorPlugin implements FlutterPlugin, MethodCallHandler {
               for(int i = 0 ; i < audioData.length; i++){
                 samples.add((float)audioData[i]);
               }
-              System.out.println(audioData[0]);
               //float pitchResult =  pitchHandler.getPitch(samples);
               try {
                 // System.out.println(pitchResult + " pitch in java");
