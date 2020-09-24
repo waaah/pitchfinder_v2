@@ -16,19 +16,12 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   Pitchdetector detector;
   bool isRecording = false;
-  String pitch;
+  double pitch;
   @override
   void initState() {
     super.initState();
-    detector =  new Pitchdetector();
+    detector =  new Pitchdetector(sampleRate : 22050 , sampleSize : 2048);
     isRecording = isRecording;
-    detector.onRecorderStateChanged.listen((data) {
-      if(mounted){
-        setState(() {
-          pitch = data["pitch"].toString();
-        });
-      }
-    });
   }
 
   @override
@@ -42,7 +35,8 @@ class _MyAppState extends State<MyApp> {
           child: 
           Column(
             children: <Widget>[
-               isRecording ? Text("Pitch is $pitch") :  Text("Press button to start.") ,
+               isRecording ? Text("Recording...") :  Container() ,
+	       pitch != null && !isRecording ? Text("Recorded hz from mic is : $pitch") : ( isRecording ? Container() : Text( "No Pitch found.")),
                FlatButton(
                 onPressed: isRecording ?  stopRecording : startRecording, 
                 child:   isRecording ?   Text("Press Me to stop") : Text("Press Me to run") 
@@ -56,18 +50,24 @@ class _MyAppState extends State<MyApp> {
   }
 
   void startRecording()  async{
-    print("startRecording");
-    setState(() {
-        isRecording = true;
-    });
-    
     await detector.startRecording();
+
+    if(detector.isRecording){
+	setState(() {
+        	isRecording = true;
+    	});
+    
+
+    }
   }
   void stopRecording() async {
-     setState(() {
+
+         await detector.stopRecording();
+    setState(() {
         isRecording = false;
-        pitch = null;
+        pitch = detector.pitch;
     });
-    await detector.stopRecording();
+
+
   }
 }

@@ -9,7 +9,8 @@ public class SwiftPitchdetectorPlugin: NSObject, FlutterPlugin {
   var startTime: Date!
   var audioRecorder: AVAudioRecorder!
   var engine:AVAudioEngine!
-
+    let sampleSize = 2048;
+    let sampleRate = 22050;
   public static func register(with registrar: FlutterPluginRegistrar) {
     channel = FlutterMethodChannel(name: "pitchdetector", binaryMessenger: registrar.messenger())
     let instance = SwiftPitchdetectorPlugin()
@@ -47,18 +48,18 @@ public class SwiftPitchdetectorPlugin: NSObject, FlutterPlugin {
             break;
       }
     result(nil)
-  }
+  }	
     func setupPcm(){
         print("pcm start recording");
         if #available(iOS 9.0, *) {
             let inputNode = engine.inputNode;
             let inputFormat = inputNode.outputFormat(forBus: 0);
-            let recordingFormat = AVAudioFormat(commonFormat: .pcmFormatInt16, sampleRate: 22050, channels: 1, interleaved: true);
+            let recordingFormat = AVAudioFormat(commonFormat: .pcmFormatInt16, sampleRate: Double(self.sampleRate), channels: 1, interleaved: true);
             let formatConverter = AVAudioConverter(from:inputFormat , to : recordingFormat!)
-            inputNode.installTap(onBus: 0, bufferSize: AVAudioFrameCount(2048), format: inputFormat){
+            inputNode.installTap(onBus: 0, bufferSize: AVAudioFrameCount(self.sampleSize), format: inputFormat){
                        (buffer , time) in
                        
-                       let pcmBuffer = AVAudioPCMBuffer(pcmFormat: recordingFormat!, frameCapacity: AVAudioFrameCount(2048))
+                let pcmBuffer = AVAudioPCMBuffer(pcmFormat: recordingFormat!, frameCapacity: AVAudioFrameCount(self.sampleSize))
                        var error : NSError? = nil;
                        
                        let inputBlock: AVAudioConverterInputBlock = {

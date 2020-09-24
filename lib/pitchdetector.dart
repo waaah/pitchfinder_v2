@@ -57,7 +57,7 @@ class Pitchdetector {
         case "getPcm":
           if (_isRecording) {
             pcmSamples = call.arguments;
-             getPitchAsync(pcmSamples);
+             //getPitchAsync(pcmSamples);
           }
           break;
         default:
@@ -69,15 +69,18 @@ class Pitchdetector {
   Future getPitchAsync(pcmSamples){
     return new Future.delayed(new Duration(milliseconds : 550) , (){
       getPitchFromSamples(pcmSamples);
+	print(pcmSamples.toString());
       _recorderController.add({
         "pitch" : _pitch
       });
     });
   }
   getPitchFromSamples(pcmSamples){
+    print(sampleSize);
+    print(sampleRate);
     var yin = new YIN(sampleRate, sampleSize);
     double samplePitch = yin.getPitch(pcmSamples);
-    print(samplePitch);
+    print(samplePitch.toString());
     if (samplePitch > -1.0) {
       _pitch = samplePitch;
     }
@@ -89,8 +92,8 @@ class Pitchdetector {
       getPitchFromSamples(pcmSamples);
       destoryChannelHandler();
       return _channel.invokeMethod('stopRecording');
-    } catch (ex) {
-      throw ex;
+    } catch (ex , stacktrace) {
+      print(stacktrace.toString());
     }
   }
   destoryChannelHandler(){
