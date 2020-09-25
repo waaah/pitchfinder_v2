@@ -20,7 +20,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    detector =  new Pitchdetector(sampleRate : 22050 , sampleSize : 2048);
+    detector =  new Pitchdetector(sampleRate : 44100 , sampleSize : 4096);
     isRecording = isRecording;
   }
 
