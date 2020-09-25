@@ -19,6 +19,11 @@ public class SwiftPitchdetectorPlugin: NSObject, FlutterPlugin {
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     switch call.method {
+        case "initializeValues":
+            let dic = call.arguments as! [String : Any]
+            self.sampleRate = dic["sampleRate"];
+            self.sampleSize = dic["sampleSize"];
+            break;
         case "startRecording":
             self.engine = AVAudioEngine();
             //let dic = call.arguments as! [String : Any]

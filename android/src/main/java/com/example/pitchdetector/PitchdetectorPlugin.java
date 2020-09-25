@@ -50,7 +50,6 @@ public class PitchdetectorPlugin implements FlutterPlugin, MethodCallHandler {
   private short[] audioData = new short[SAMPLE_SIZE];
   private Handler mainHandler =  new Handler();
   private Handler subHandler = new Handler();
-  PitchHandler pitchHandler = new PitchHandler(SAMPLE_RATE , SAMPLE_SIZE);
   private Runnable runnable; 
   private float pitch = 0;
 
@@ -78,13 +77,12 @@ public class PitchdetectorPlugin implements FlutterPlugin, MethodCallHandler {
   @Override
   public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
     switch(call.method){
-      case "getPlatformVersion":
-        result.success("Android " + android.os.Build.VERSION.RELEASE);
-        break;
+      
       case "initializeValues":
         this.SAMPLE_RATE = call.argument("sampleRate");
         this.SAMPLE_SIZE = call.argument("sampleSize");
         audioData = new short[this.SAMPLE_SIZE];
+        break;
       case "startRecording":
         startRecord(result);
         break;

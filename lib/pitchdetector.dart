@@ -35,12 +35,13 @@ class Pitchdetector {
   double get pitch => _pitch;
 
   Future<bool> checkPermission() async {
-    return await Permission.microphone.request().isGranted;
+    return Permission.microphone.request().isGranted;
   }
 
   startRecording() async {
     if (await checkPermission()) {
       try {
+        print("check permission");
         _pitch = null;
         var result = await _channel.invokeMethod('startRecording');
         _isRecording = true;
@@ -48,7 +49,9 @@ class Pitchdetector {
       } catch (ex) {
         print(ex);
       }
-    } else {}
+    } else {
+
+    }
   }
   
   createChannelHandler() {
@@ -56,7 +59,7 @@ class Pitchdetector {
       switch (call.method) {
         case "getPcm":
           if (_isRecording) {
-            pcmSamples = call.arguments;
+              pcmSamples = call.arguments;
              //getPitchAsync(pcmSamples);
           }
           break;
@@ -66,21 +69,16 @@ class Pitchdetector {
       return null;
     });
   }
+
   Future getPitchAsync(pcmSamples){
     return new Future.delayed(new Duration(milliseconds : 550) , (){
       getPitchFromSamples(pcmSamples);
-	print(pcmSamples.toString());
-      _recorderController.add({
-        "pitch" : _pitch
-      });
+     
     });
   }
   getPitchFromSamples(pcmSamples){
-    print(sampleSize);
-    print(sampleRate);
     var yin = new YIN(sampleRate, sampleSize);
     double samplePitch = yin.getPitch(pcmSamples);
-    print(samplePitch.toString());
     if (samplePitch > -1.0) {
       _pitch = samplePitch;
     }
@@ -91,7 +89,7 @@ class Pitchdetector {
       _isRecording = false;
       getPitchFromSamples(pcmSamples);
       destoryChannelHandler();
-      return _channel.invokeMethod('stopRecording');
+      _channel.invokeMethod('stopRecording');
     } catch (ex , stacktrace) {
       print(stacktrace.toString());
     }

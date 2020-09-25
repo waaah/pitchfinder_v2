@@ -14,14 +14,13 @@ class AMDF {
 
   var result;
 
-  AMDF(double sampleRate, int bufferSize) {
+  AMDF(int sampleRate, int bufferSize) {
     implement(
         sampleRate, bufferSize, DEFAULT_MIN_FREQUENCY, DEFAULT_MAX_FREQUENCY);
   }
 
-  void implement(double sampleRate, int bufferSize, double minFrequency,
+  void implement(int sampleRate, int bufferSize, double minFrequency,
       double maxFrequency) {
-    sampleRate = sampleRate;
     amd = List.filled(bufferSize, 0.0);
     ratio = DEFAULT_RATIO;
     sensitivity = DEFAULT_SENSITIVITY;

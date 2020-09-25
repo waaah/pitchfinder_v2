@@ -1,3 +1,8 @@
-## 0.0.1
+# 0.0.1
+* Working Hz detection for android.
 
-* TODO: Describe initial release.
+# 0.0.2
+* Retweeked codes for bugs.
+
+# 0.0.3
+* Added pcm support for ios.

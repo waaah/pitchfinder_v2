@@ -51,21 +51,17 @@ class _MyAppState extends State<MyApp> {
 
   void startRecording()  async{
     await detector.startRecording();
-
     if(detector.isRecording){
-	setState(() {
-        	isRecording = true;
+	    setState(() {
+        isRecording = true;
     	});
-    
-
     }
   }
   void stopRecording() async {
-
-         await detector.stopRecording();
+    detector.stopRecording();
     setState(() {
-        isRecording = false;
-        pitch = detector.pitch;
+      isRecording = false;
+      pitch = detector.pitch;
     });
 
 

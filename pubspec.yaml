@@ -1,6 +1,6 @@
 name: pitchdetector
-description: Pitch detection for android (for now).
-version: 0.0.2+4
+description: Pitch detection for android and ios. Gets the pitch and pcm samples in HZ.
+version: 0.0.3+2
 homepage: https://example-pet-store.com/newtify
 environment:
   sdk: ">=2.7.0 <3.0.0"
