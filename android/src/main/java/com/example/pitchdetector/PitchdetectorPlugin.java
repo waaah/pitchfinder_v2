@@ -132,9 +132,8 @@ public class PitchdetectorPlugin implements FlutterPlugin, MethodCallHandler {
               float pitchResult =  pitchHandler.getPitch(samples);
               try {
                 if(pitchResult != -1.0){
-                  channel.invokeMethod("getPitch", pitchResult);
+                  channel.invokeMethod("getPitch", samples);
                 }
-                
                 findPitch(audioRecorder , recording);
                   // SENDS ARRAY "returnData" BACK TO FLUTTER
               } catch (Exception err) {

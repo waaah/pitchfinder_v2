@@ -7,7 +7,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:pitchdetector/pitchdetector.dart';
 import 'package:pitchdetector/pitchdetectorclass.dart';
 
-
 class Pitchdetector {
   static const MethodChannel _channel = const MethodChannel('pitchdetector');
   static StreamController<Object> _recorderController =
@@ -70,6 +69,7 @@ class Pitchdetector {
             _recorderController.add({
               "pitch" : call.arguments
             });
+            
           }
           break;
         default:
