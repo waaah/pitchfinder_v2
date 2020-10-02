@@ -7,6 +7,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:pitchdetector/pitchdetector.dart';
 import 'package:pitchdetector/pitchdetectorclass.dart';
 
+
 class Pitchdetector {
   static const MethodChannel _channel = const MethodChannel('pitchdetector');
   static StreamController<Object> _recorderController =
@@ -17,7 +18,7 @@ class Pitchdetector {
   int sampleSize = 2048;
   int sampleRate = 22050;
   List pcmSamples = [];
-
+  YIN yin; 
   Pitchdetector({
     this.sampleSize,
     this.sampleRate
@@ -55,12 +56,20 @@ class Pitchdetector {
   }
   
   createChannelHandler() {
-    _channel.setMethodCallHandler((MethodCall call){
+    _channel.setMethodCallHandler((MethodCall call) async{
       switch (call.method) {
         case "getPcm":
           if (_isRecording) {
-              pcmSamples = call.arguments;
+             pcmSamples = call.arguments;
              //getPitchAsync(pcmSamples);
+             var pitch = yin.getPitch(pcmSamples);
+          }
+          break;
+        case "getPitch":
+          if (_isRecording) {
+            _recorderController.add({
+              "pitch" : call.arguments
+            });
           }
           break;
         default:
@@ -77,7 +86,7 @@ class Pitchdetector {
     });
   }
   getPitchFromSamples(pcmSamples){
-    var yin = new YIN(sampleRate, sampleSize);
+  
     double samplePitch = yin.getPitch(pcmSamples);
     if (samplePitch > -1.0) {
       _pitch = samplePitch;
@@ -87,7 +96,7 @@ class Pitchdetector {
   stopRecording() async {
     try {
       _isRecording = false;
-      getPitchFromSamples(pcmSamples);
+      //getPitchFromSamples(pcmSamples);
       destoryChannelHandler();
       _channel.invokeMethod('stopRecording');
     } catch (ex , stacktrace) {

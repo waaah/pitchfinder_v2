@@ -52,7 +52,7 @@ public class PitchdetectorPlugin implements FlutterPlugin, MethodCallHandler {
   private Handler subHandler = new Handler();
   private Runnable runnable; 
   private float pitch = 0;
-
+  private PitchHandler pitchHandler;
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
     channel = new MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "pitchdetector");
@@ -82,6 +82,7 @@ public class PitchdetectorPlugin implements FlutterPlugin, MethodCallHandler {
         this.SAMPLE_RATE = call.argument("sampleRate");
         this.SAMPLE_SIZE = call.argument("sampleSize");
         audioData = new short[this.SAMPLE_SIZE];
+        pitchHandler = new PitchHandler(SAMPLE_RATE , SAMPLE_SIZE);
         break;
       case "startRecording":
         startRecord(result);
@@ -127,20 +128,14 @@ public class PitchdetectorPlugin implements FlutterPlugin, MethodCallHandler {
               //RUN FOR DELAY OF 500ms
               audioRecorder.read(audioData, 0, SAMPLE_SIZE);
               //System.out.println(audioData.toString());
-              //float[] samples = pitchHandler.shortToPcmArray(audioData);
-              List<Float> samples = new ArrayList<Float>();
-              for(int i = 0 ; i < audioData.length; i++){
-                samples.add((float)audioData[i]);
-              }
-              //float pitchResult =  pitchHandler.getPitch(samples);
+              float[] samples = pitchHandler.shortToPcmArray(audioData);
+              float pitchResult =  pitchHandler.getPitch(samples);
               try {
-                // System.out.println(pitchResult + " pitch in java");
-                // if(pitchResult != -1.0){
-                //   channel.invokeMethod("getPitch", pitchResult);
-                  channel.invokeMethod("getPcm", samples);
-                //}
+                if(pitchResult != -1.0){
+                  channel.invokeMethod("getPitch", pitchResult);
+                }
+                
                 findPitch(audioRecorder , recording);
-                  
                   // SENDS ARRAY "returnData" BACK TO FLUTTER
               } catch (Exception err) {
                   System.out.println(err.getMessage());

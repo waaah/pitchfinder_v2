@@ -22,6 +22,11 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     detector =  new Pitchdetector(sampleRate : 44100 , sampleSize : 4096);
     isRecording = isRecording;
+    detector.onRecorderStateChanged.listen((event) {
+      setState(() {
+        pitch = event["pitch"];
+      }); 
+    });
   }
 
   @override
@@ -36,7 +41,7 @@ class _MyAppState extends State<MyApp> {
           Column(
             children: <Widget>[
                isRecording ? Text("Recording...") :  Container() ,
-	       pitch != null && !isRecording ? Text("Recorded hz from mic is : $pitch") : ( isRecording ? Container() : Text( "No Pitch found.")),
+	             isRecording ? Text("Recorded hz from mic is : $pitch") : Text( "Not Recording."),
                FlatButton(
                 onPressed: isRecording ?  stopRecording : startRecording, 
                 child:   isRecording ?   Text("Press Me to stop") : Text("Press Me to run") 

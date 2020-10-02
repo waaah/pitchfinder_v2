@@ -1,5 +1,7 @@
 package com.example.pitchdetector;
+import be.tarsos.dsp.pitch.Yin;
 import be.tarsos.dsp.pitch.AMDF;
+
 
 public class PitchHandler{
     int SAMPLE_RATE = 0;
